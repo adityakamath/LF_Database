@@ -1,5 +1,5 @@
 /*	LCD.h
-Technophilia embedded systems
+Sourced from Technophilia Embedded Systems
 
 	
 This header files have implementation of some common finctions of the LCD.
