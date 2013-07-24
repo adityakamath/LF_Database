@@ -1,0 +1,342 @@
+#include<avr/io.h>
+#define setbit(x,y); x|=(1<<y)
+#define clearbit(x,y); x&=(~(1<<y))
+#define checkbit(x,y) x&(1<<y)
+#include<util/delay.h>
+int i=0;
+//i=0;
+int main(void)
+{
+/* this is to define port d as outputports for motor*/
+setbit(DDRD,0);
+setbit(DDRD,1);
+setbit(DDRD,2);
+setbit(DDRD,3);
+
+setbit(DDRB,1);
+setbit(DDRB,2);
+setbit(DDRB,3);
+setbit(DDRB,5);
+/* this is to define port c as inputports for sensors*/
+clearbit(DDRC,0);					// ext left sensor
+clearbit(DDRC,1)	;				//left sensor
+clearbit(DDRC,2)	;				// middle sensor
+clearbit(DDRC,3);					// right sensor
+clearbit(DDRC,4)	;				// ext right stopper
+clearbit(DDRC,5)	;				//front wall trigger
+/*initilization*/
+setbit(PORTC,0);
+setbit(PORTC,1);
+setbit(PORTC,2);
+setbit(PORTC,3);
+setbit(PORTC,4);
+setbit(PORTC,5);
+//loop from here
+while (1)
+{
+
+
+if (!(checkbit(PINC,5)))
+	{
+	clearbit(PORTD,0);
+	clearbit(PORTD,1);
+	clearbit(PORTD,2);
+	clearbit(PORTD,3);
+	}
+/*	
+else if (((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))))	//111    white white white
+			{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					//go straight
+				setbit(PORTD,2);				//M2 rev
+				clearbit(PORTD,3);
+			}
+ else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && (!(checkbit(PINC,2))))	//110		white white black
+			{
+				setbit(PORTD,0);         		//M1 stop
+				clearbit(PORTD,1);					// diff right
+				clearbit(PORTD,2);				//M2 forward
+				setbit(PORTD,3);
+			}
+		
+else if		(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && ((checkbit(PINC,2))))	//101		white black white		
+			{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// go straight
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+			}
+else if		(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))))	//100		white black black		
+			{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// normal right
+				clearbit(PORTD,2);				//M2 rev
+				clearbit(PORTD,3);
+			}
+		
+else if		((!(checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))))	//011	black white white
+			{
+				clearbit(PORTD,0);         		//M1 rev				
+				setbit(PORTD,1);					// diff left
+				setbit(PORTD,2);				//M2 forward
+				clearbit(PORTD,3);
+			}
+else if ((!(checkbit(PINC,0)))  && ((checkbit(PINC,1))) && (!(checkbit(PINC,2))))	//010		black white black					
+			{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// differential right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+			}
+		
+else if ((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && ((checkbit(PINC,2))))	//001		black black white					
+			{
+				clearbit(PORTD,0);         		//M1 rev
+				clearbit(PORTD,1);					// normal left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+			}
+else if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))))	//000	black black black
+			{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// go straight
+				setbit(PORTD,2);				//M2 rev
+				clearbit(PORTD,3);
+			}
+		
+*/
+
+	
+
+
+
+
+else if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && (!(checkbit(PINC,4)))) 	// b b b b b 	go straight
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// go straight
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				i++;
+				//_delay_ms(05);
+}
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4)))) 	// w w w w w 	immed left
+{
+				clearbit(PORTD,0);         		//M1 rev
+				setbit(PORTD,1);					// immed left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				_delay_ms(05);
+}
+	
+else if	((!(checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4))))	// b w w w w 	immed left
+{
+				clearbit(PORTD,0);         		//M1 rev
+				setbit(PORTD,1);					// immed left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				_delay_ms(15);
+}
+else if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && ((checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4))))	// b b w w w  	immed left
+{
+				clearbit(PORTD,0);         		//M1 rev
+				setbit(PORTD,1);					// immed left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				_delay_ms(10);
+}
+else if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4))))	// b b b w w  	immed left
+{
+				clearbit(PORTD,0);         		//M1 rev
+				setbit(PORTD,1);					// immed left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				_delay_ms(15);
+}
+else if	(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && ((checkbit(PINC,4))))	// w b b b w 	go straight
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// go straight
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && (!(checkbit(PINC,4))))	// w w b b b	immed right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// immed right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+				_delay_ms(15);
+}
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))) && (!(checkbit(PINC,3))) && (!(checkbit(PINC,4))))	// w w w b b	immed right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// immed right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+				_delay_ms(10);
+}
+
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))) && ((checkbit(PINC,3))) && (!(checkbit(PINC,4))))	// w w w w b	immed right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// immed right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+				_delay_ms(15);
+}
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && (!(checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4))))	// w w b w w	go straight
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// go straight
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+else if	(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && ((checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4))))	// w b w w w 	normal left
+{
+				clearbit(PORTD,0);         		//M1 stop
+				clearbit(PORTD,1);					// normal left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && ((checkbit(PINC,2))) && (!(checkbit(PINC,3))) && ((checkbit(PINC,4))))	// w w w b w	normal right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// normal right
+				clearbit(PORTD,2);				//M2 stop
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+else if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && ((checkbit(PINC,4)))) 	// b b b b w 	immed left
+{
+				clearbit(PORTD,0);         		//M1 rev
+				setbit(PORTD,1);					// immed left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				_delay_ms(05);
+}
+
+else if	(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && (!(checkbit(PINC,4)))) 	// w b b b b 	immed right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// immed right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+				_delay_ms(05);
+}
+
+else if	(((checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && ((checkbit(PINC,3))) && ((checkbit(PINC,4)))) 	// w b b w w 	normal left 
+{
+				clearbit(PORTD,0);         		//M1 stop
+				clearbit(PORTD,1);					// normal left
+				setbit(PORTD,2);				//M2 fwd
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+else if	(((checkbit(PINC,0)))  && ((checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && ((checkbit(PINC,4)))) 	// w w b b w 	normal right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// normal right
+				clearbit(PORTD,2);				//M2 stop
+				clearbit(PORTD,3);
+				//_delay_ms(05);
+}
+else //if	((!(checkbit(PINC,0)))  && (!(checkbit(PINC,1))) && (!(checkbit(PINC,2))) && (!(checkbit(PINC,3))) && (!(checkbit(PINC,4))))	// any other condition immediate right
+{
+				setbit(PORTD,0);         		//M1 fwd
+				clearbit(PORTD,1);					// immed right
+				clearbit(PORTD,2);				//M2 rev
+				setbit(PORTD,3);
+				_delay_ms(05);
+}
+/*clearbit(PORTB,1);   
+setbit(PORTB,2);
+clearbit(PORTB,3);
+clearbit(PORTB,5);
+*/
+//}
+if (i==1)           //0 0 0 1
+{
+setbit(PORTB,1);   
+clearbit(PORTB,2);
+clearbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==2)	// 0 0 1 0
+{
+clearbit(PORTB,1);   
+setbit(PORTB,2);
+clearbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==3)	// 0 0 1 1
+{
+setbit(PORTB,1);   
+setbit(PORTB,2);
+clearbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==4)   //0 1 0 0
+{
+clearbit(PORTB,1);   
+clearbit(PORTB,2);
+setbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==5)	// 0 1 0 1
+{
+setbit(PORTB,1);   
+clearbit(PORTB,2);
+setbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==6) // 0 1 1 0
+{
+clearbit(PORTB,1);   
+setbit(PORTB,2);
+setbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==7)	// 0 1 1 1 
+{
+setbit(PORTB,1);   
+setbit(PORTB,2);
+setbit(PORTB,3);
+clearbit(PORTB,5);
+}
+
+else if (i==8) 	// 1 0 0 0
+{
+clearbit(PORTB,1);   
+clearbit(PORTB,2);
+clearbit(PORTB,3);
+setbit(PORTB,5);
+}
+else if (i==9)	// 1 0 0 1
+{
+setbit(PORTB,1);   
+clearbit(PORTB,2);
+clearbit(PORTB,3);
+setbit(PORTB,5);
+}
+else		// 0 0 0 0
+{
+clearbit(PORTB,1);   
+clearbit(PORTB,2);
+clearbit(PORTB,3);
+clearbit(PORTB,5);
+}
+}
+return 0;
+}

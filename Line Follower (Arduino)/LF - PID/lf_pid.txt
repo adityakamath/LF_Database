@@ -1,0 +1,236 @@
+int l1=4;
+int l2=5;
+int r2=6;
+int r1=7;
+int motor[4]={
+  4,5,6,7};
+int sensorle=8;
+int sensorl=9;
+int sensor_c=10;
+int sensorr=11;
+int sensorre=12;
+int sensorfront=3;
+int displed1=0;
+int displed2=1;
+int displed3=2;
+
+/*sensors: 8 9 10 11 12
+ motor 4,5,6,7
+ front sensor 3
+ display  led 1,2,3*/
+
+
+float proportional=0,integral=0,diff=0,fx=0;
+
+float k_p=75,k_i=.8,k_d=35;
+
+int s_val=0b00000000;
+int steer,m_left=0,m_right=0,speed_motor=90;
+int val=0,p_val;
+int overlap=0,poverlap=0,transition=0,t_transition=0;
+
+void sensor_read()
+{
+
+  p_val=val;
+  poverlap=overlap;
+
+  s_val=0b00000000;
+  val=0;
+
+  if(digitalRead(sensor_c)==LOW)
+  {
+    s_val=s_val||0b00000100;
+    val=0;
+
+    speed_motor=90;
+
+  }
+
+  if(digitalRead(sensorr)==LOW)
+  {
+
+    if((digitalRead(sensor_c)==LOW))
+      val-=1;
+    else
+      val-=3;
+    s_val=s_val||0b00000010;
+  }
+
+  if(digitalRead(sensorre)==LOW)
+  {
+    if((digitalRead(sensorr)==LOW))
+      val-=2;
+    else
+    {
+      speed_motor=75;
+      val-=6;
+    }
+    s_val=s_val||0b00000001;
+
+  }
+
+  if(digitalRead(sensorl)==LOW)
+  {
+
+    if((digitalRead(sensor_c)==LOW))
+      val+=1;
+    else
+      val+=3;
+    s_val=s_val||0b00001000;  
+  }  
+
+  if(digitalRead(sensorle)==LOW)
+  {
+
+    if((digitalRead(sensorl)==LOW))
+      val+=2;
+    else
+    {
+      val+=6;
+      speed_motor=75;  
+    }
+    s_val=s_val||0b00010000;  
+  }
+
+  if(s_val==0b00000000)
+  {
+    if(p_val>0)
+    {
+      val=7;
+
+    }
+    else if(p_val<0)
+      val=-7;
+    else 
+      val=p_val;
+  }
+
+  if((digitalRead(sensorle)==LOW)&&(digitalRead(sensorre)==LOW))
+  {
+    transition=transition+1;
+    ;
+    val=p_val;
+
+    overlap=1;
+
+  }
+  else
+  {
+    overlap=0;
+    transition=0;
+  }
+}
+void write_transition(int data)
+{
+
+  if(data%2!=0)
+    digitalWrite(displed1,HIGH);
+  else
+    digitalWrite(displed1,LOW);
+
+  if((data==2)||(data==3)||(data==6)||(data==7))
+    digitalWrite(displed2,HIGH);
+  else
+    digitalWrite(displed2,LOW);
+
+  if(data>3)
+    digitalWrite(displed3,HIGH);
+  else
+    digitalWrite(displed3,LOW);
+}
+void transfer()
+{
+
+  proportional=val/7;
+  integral+=val/8000000;
+  diff=(val-p_val)/14;  
+
+
+  {
+
+    fx=(k_p*proportional+k_i*integral+k_i*diff);//k_i is given a small value
+
+    steer=fx;
+
+  }
+
+  if(val>=0)
+  {
+    m_right=speed_motor+steer;
+    m_left=speed_motor-steer;  
+  }
+
+  if(val<0)
+  {
+    m_left=speed_motor-steer;
+    m_right=speed_motor+steer;
+  }  
+}
+
+
+void motor_write(int ldata,int rdata)
+{
+
+
+  digitalWrite(l1,HIGH);
+  analogWrite(l2,255-ldata);
+  analogWrite(r2,255-rdata);
+  digitalWrite(r1,HIGH);
+
+}
+void setup()
+{
+  for(int i;i<4;++i)
+    pinMode(motor[i],OUTPUT);
+  pinMode(sensor_c,INPUT);
+  pinMode(sensorl,INPUT);
+  pinMode(sensorle,INPUT);
+  pinMode(sensorr,INPUT);
+  pinMode(sensorre,INPUT);
+  pinMode(sensorfront,INPUT);
+  pinMode(displed1,OUTPUT);
+  pinMode(displed2,OUTPUT);
+  pinMode(displed3,OUTPUT);
+
+}
+
+void loop()
+{
+
+
+  {
+    sensor_read();
+    transfer();
+    //extra_code here
+
+
+    {
+
+      if((poverlap-overlap)<0)
+      {
+        t_transition+=1;
+        write_transition(t_transition);
+      }
+    }
+
+    motor_write(m_left,m_right);//
+    delay(20);
+  }
+
+  while(digitalRead(sensorfront)==HIGH)
+    motor_write(0,0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
