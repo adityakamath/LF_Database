@@ -1,4 +1,3 @@
-Okay, I am not really that bored to actually write instructions on codes which I have uploaded on GitHub. Sorry for that, BTW. Anyway if you are really interested in knowing how the codes work or how to implement them, shoot me an email at adityakamath.rm@gmail.com or adityakamath@live.com. Besides, the description should have already given you a general idea about what the codes are all about anyway. 
+A repository of Line Follower codes developed individually and with team-members (and by friends/colleagues) on multiple occassions throughout my bachelor's course at Manipal Institute of Technology (2010-2014)
 
-Cheers!
-Aditya Kamath
+These codes were used/modified as a framework for multiple line/grid follower competitions. 
